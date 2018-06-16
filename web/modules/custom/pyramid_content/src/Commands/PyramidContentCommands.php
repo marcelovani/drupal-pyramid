@@ -17,6 +17,7 @@ class PyramidContentCommands extends DrushCommands {
   // Using UUID let us import / update existing content easily.
   // Using constant here allow foreign classes to refer to these UUIDs.
   const HOMEPAGE_UUID = '0e0cc85a-0bb9-470e-89a3-4d0fe6a99f1f';
+  const CAMP_UUID = '974c3734-d8a5-442b-84ce-4b4010ad9068';
 
   // Defaut author (admin).
   const DEFAULT_USER = 1;
@@ -104,6 +105,52 @@ class PyramidContentCommands extends DrushCommands {
   }
 
   /**
+   * Imports homepage.
+   *
+   * @command pyramid-content:import-camp
+   * @aliases import-camp
+   */
+  public function createDrupalCamp() {
+    $content = file_get_contents($this->pathToContent . "/camp.json");
+    $json = json_decode($content, TRUE);
+
+    // Defaults.
+    $links = [];
+    $components = [];
+
+    // Prepare the buttons.
+    foreach ($json['links'] as $link) {
+      $links = [
+        'uri' => $link['uri'],
+        'title' => $link['title'],
+        'options' => [
+          'attributes' => [
+            'class' => [$link['class']],
+          ],
+        ],
+      ];
+    }
+
+    // Create the image.
+    $image = $this->createImage($json['image'], 'Drupal Camp');
+
+    // Update or create the homepage.
+    if ($node = \Drupal::service('entity.repository')->loadEntityByUuid('node', $this::HOMEPAGE_UUID)) {
+      $node->delete();
+    }
+      
+    $page = Node::create([
+      'type' => 'drupal_camp',
+      'title' => $json['title'],
+      'body' => ['value' => $this->getLorem()],
+      'field_image' => ['target_id' => ($image) ? $image->id() : NULL],
+      'uuid' => $this::CAMP_UUID,
+      'uid' => $this::DEFAULT_USER,
+    ]);
+    $page->save();
+  }
+
+  /**
    * Create a Media entity from an image file.
    *
    * @param string $filename
@@ -116,8 +163,7 @@ class PyramidContentCommands extends DrushCommands {
    */
   protected function createMediaImage(string $filename, string $title, string $alt = '', string $folder = 'public://') {
     $media = FALSE;
-    $image_data = file_get_contents($this->pathToImages . '/' . $filename);
-    $file_image = file_save_data($image_data, $folder . '/' . $filename, FILE_EXISTS_REPLACE);
+    $file_image = $this->createImage($filename, $title, $alt, $folder);
     if ($file_image) {
       $img = [
         'title' => $title,
@@ -132,6 +178,15 @@ class PyramidContentCommands extends DrushCommands {
       $media->save();
     }
     return $media;
+  }
+
+  /**
+   * No doc. I'm lazy.
+   */
+  protected function createImage(string $filename, string $title, string $alt = '', string $folder = 'public://') {
+    $image_data = file_get_contents($this->pathToImages . '/' . $filename);
+    $file_image = file_save_data($image_data, $folder . '/' . $filename, FILE_EXISTS_REPLACE);
+    return $file_image;
   }
 
   /**

@@ -1,0 +1,38 @@
+uuid: a183aae7-82d5-4fa0-8245-6cabb37e0391
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.drupal_camp.body
+    - field.field.node.drupal_camp.field_image
+    - node.type.drupal_camp
+  module:
+    - image
+    - text
+    - user
+id: node.drupal_camp.default
+targetEntityType: node
+bundle: drupal_camp
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_image:
+    weight: 102
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true

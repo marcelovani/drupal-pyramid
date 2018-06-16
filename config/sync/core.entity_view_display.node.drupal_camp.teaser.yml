@@ -1,0 +1,29 @@
+uuid: b2385d00-451a-4b81-bbbd-dc823d8626de
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.drupal_camp.body
+    - node.type.drupal_camp
+  module:
+    - text
+    - user
+id: node.drupal_camp.teaser
+targetEntityType: node
+bundle: drupal_camp
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true

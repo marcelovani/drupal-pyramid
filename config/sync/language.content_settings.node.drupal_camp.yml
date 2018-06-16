@@ -1,0 +1,11 @@
+uuid: dbd50f50-b050-4b6b-84c5-b675ecfe6dd3
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.drupal_camp
+id: node.drupal_camp
+target_entity_type_id: node
+target_bundle: drupal_camp
+default_langcode: site_default
+language_alterable: false
